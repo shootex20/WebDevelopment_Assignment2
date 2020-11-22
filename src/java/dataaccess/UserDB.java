@@ -3,66 +3,73 @@ package dataaccess;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import models.User;
+import javax.persistence.TypedQuery;
+import models.Users;
 
 
 public class UserDB {
 
-    public User get(String username) {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        
-        try {
-            User user = em.find(User.class, username);
-            return user;
-        } finally {
-            em.close();
-        }
-    }
-
-    public void insert(User user) throws Exception {
+    public int insert(Users user) throws Exception {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         EntityTransaction trans = em.getTransaction();
-        
+
         try {
-            
-            User users = new User();
-            users = user;
             trans.begin();
-            em.persist(users);
+            em.persist(user);
             trans.commit();
-        } catch (Exception ex) {
+        }catch (Exception ex) {
             trans.rollback();
-        } finally {
+        }finally {
             em.close();
+            return 1;
+        
         }
     }
 
-    public void update(User user) throws Exception {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    public int update(Users user) throws Exception {
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();  
         EntityTransaction trans = em.getTransaction();
-        
-        try {
+       try {
             trans.begin();
             em.merge(user);
             trans.commit();
-        } catch (Exception ex) {
+        } catch(Exception ex){
             trans.rollback();
         } finally {
+            em.close();
+            return 1;
+        } 
+    }
+
+    public List<Users> getAll() throws Exception {
+         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+          TypedQuery<Users> query = em.createNamedQuery("Users.findAll", Users.class);
+         List<Users> results = query.getResultList();
+            return results;
+    }
+
+    public Users getUser(String username) throws Exception {
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        try{
+            Users user = em.find(Users.class, username);
+            return user;
+        }finally{
             em.close();
         }
     }
 
-    public void delete(User user) throws Exception {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    public int delete(Users user) throws Exception {
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();  
         EntityTransaction trans = em.getTransaction();
-        
         try {
-            em.remove(user);
+            trans.begin();
+            em.remove(em.merge(user));
             trans.commit();
-        } catch (Exception ex) {
+        } catch(Exception ex){
             trans.rollback();
         } finally {
             em.close();
+            return 1;
         }
     }
 }

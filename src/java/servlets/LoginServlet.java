@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import models.Users;
+import services.AccountService;
 
 /**
  *
@@ -35,6 +37,7 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String logout = request.getParameter("logout");
 
+        
         if (logout != null) {
             session.invalidate();
             request.setAttribute("displayMessage", "Logged out.");
@@ -45,55 +48,30 @@ public class LoginServlet extends HttpServlet {
         } else if (username == null || password == null) {
             getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
         }
-     
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        //Sets session
-        HttpSession session = request.getSession();
-
-        //Sets path to login files.
-        String path = getServletContext().getRealPath("/WEB-INF/users.txt");
-
         String password = request.getParameter("password");
         String username = request.getParameter("username");
+        
+        AccountService as = new AccountService();
+        Users user = as.login(username, password);
+        
+        if (user == null) {
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+            return;
+        }
+        
+        HttpSession session = request.getSession();
+        session.setAttribute("username", username);
 
-        BufferedReader br = new BufferedReader(new FileReader(new File(path)));
-        String line;
-
-        while ((line = br.readLine()) != null) {
-            String[] parts = line.split(",");
-
-            String user = parts[0];
-            String pass = parts[1];
-
-            /*
-            if (username.equals("admin") && password.equals("password")) {
-                session.setAttribute("username", username);
-                response.sendRedirect(response.encodeRedirectURL("admin"));
-            } else*/ 
-            if (user.equals(username) && pass.equals(password)) {
-                
-                if(username.equals("admin") && password.equals("password"))
-                        {
-                        session.setAttribute("username", username);
-                         response.sendRedirect(response.encodeRedirectURL("admin"));
-                        }
-                else
-                {
-               session.setAttribute("username", username);
-              response.sendRedirect(response.encodeRedirectURL("inventory"));
-                }
-
-            } 
-            else if (!user.equals(username) && !pass.equals(password)) {
-                request.setAttribute("displayMessage", "Invalid username or password");
-               request.getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
-
-            }
+        if (user.getIsAdmin() == true) {
+            response.sendRedirect("admin");
+        } else {
+            response.sendRedirect("inventory");
         }
 
 

@@ -5,8 +5,11 @@
  */
 package dataaccess;
 
+import java.util.List;
 import javax.persistence.EntityManager;
-import models.User;
+import javax.persistence.TypedQuery;
+import models.Categories;
+
 
 /**
  *
@@ -14,15 +17,11 @@ import models.User;
  */
 public class CategoriesDB {
     
-        public User get(String email) {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        
-        try {
-            User user = em.find(User.class, email);
-            return user;
-        } finally {
-            em.close();
-        }
+          public List<Categories> getAll() throws Exception {
+         EntityManager em = DBUtil.getEmFactory().createEntityManager();
+          TypedQuery<Categories> query = em.createNamedQuery("Categories.findAll", Categories.class);
+         List<Categories> results = query.getResultList();
+            return results;
     }
     
 }

@@ -14,15 +14,47 @@
     <body>
         <h1>Home Inventory for ${username}.</h1>
         <br>
-        <h3>Add Item</h3>
         <br>
         <form method="post">
+            
+                <table>
+      <tr>
+        <th>Category</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th></th>
+      </tr>
+      <c:forEach var="items" items="${HomeItems}">
+      <tr>
+        <td>${items.category}</td>
+      </tr>
+      <tr>
+        <td>${items.itemname}</td>
+      </tr>
+      
+      <tr>
+        <td>${items.price}</td>
+      </tr>
+      <tr>
+        <td><input type="submit" value="Delete" name="${items.itemid}"></td>
+      </tr>
+      </c:foreach>
+    </table>
+                    <br>
+        <h3>Add Item</h3>
+        <br>
         <label for="category">Category: </label>
         <select name="category" id="category">
+        <option value="kitchen">kitchen</option>
+        <option value="bathroom">bathroom</option>
+        <option value="living room">living room</option>
+        <option value="basement">basement</option>
         <option value="bedroom">bedroom</option>
         <option value="garage">garage</option>
-        <option value="kitchen">kitchen</option>
-        <option value="living">living room</option>
+        <option value="office">office</option>
+        <option value="utility room">utility room</option>
+        <option value="storage">storage</option>
+        <option value="other">other</option>
         </select>
         <br>
         <label for="title">Item Name: </label>

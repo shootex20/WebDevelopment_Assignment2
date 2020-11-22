@@ -8,8 +8,8 @@ package dataaccess;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import models.Item;
-import models.User;
+import models.HomeItems;
+import models.Users;
 
 /**
  *
@@ -17,22 +17,23 @@ import models.User;
  */
 public class ItemsDB {
     
-    public List<Item> getAll(String owner) throws Exception {
+    
+    public List<HomeItems> getAll(String owner) throws Exception {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         
         try {
-            User user = em.find(User.class, owner);
+            Users user = em.find(Users.class, owner);
             return user.getHomeItemsList();
         } finally {
             em.close();
         }
     }
 
-    public Item get(int id) throws Exception {
+    public HomeItems get(int id) throws Exception {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         
         try {
-            Item note = em.find(Item.class, id);
+            HomeItems note = em.find(HomeItems.class, id);
             // System.out.println("first name: " + note.getOwner().getFirstName());
             // get all notes of the same owner as that note
             // List<Note> notes = note.getOwner().getNoteList();
@@ -42,12 +43,12 @@ public class ItemsDB {
         }
     }
 
-    public void insert(Item hi) throws Exception {
+    public void insert(HomeItems hi) throws Exception {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         EntityTransaction trans = em.getTransaction();
         
         try {
-            User user = hi.getOwner();
+            Users user = hi.getOwner();
             user.getHomeItemsList().add(hi);
             trans.begin();
             em.persist(hi);
@@ -60,7 +61,7 @@ public class ItemsDB {
         }
     }
 
-    public void update(Item hi) throws Exception {
+    public void update(HomeItems hi) throws Exception {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         EntityTransaction trans = em.getTransaction();
         
@@ -75,12 +76,12 @@ public class ItemsDB {
         }
     }
 
-    public void delete(Item hi) throws Exception {
+    public void delete(HomeItems hi) throws Exception {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         EntityTransaction trans = em.getTransaction();
         
         try {
-            User user = hi.getOwner();
+            Users user = hi.getOwner();
             user.getHomeItemsList().remove(hi);
             trans.begin();
             em.remove(em.merge(hi));

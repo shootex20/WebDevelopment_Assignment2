@@ -8,30 +8,30 @@ package services;
 import dataaccess.ItemsDB;
 import dataaccess.UserDB;
 import java.util.List;
-import models.Item;
-import models.User;
+import models.HomeItems;
+import models.Users;
 
 /**
  *
  * @author 813017
  */
 public class Inventory {
-        public Item get(int id) throws Exception {
+        public HomeItems get(int id) throws Exception {
         ItemsDB hiDB = new ItemsDB();
-        Item hi = hiDB.get(id);
+        HomeItems hi = hiDB.get(id);
         return hi;
     }
     
-    public List<Item> getAll(String username) throws Exception {
+    public List<HomeItems> getAll(String username) throws Exception {
         ItemsDB hiDB = new ItemsDB();
-        List<Item> homeitems = hiDB.getAll(username);
+        List<HomeItems> homeitems = hiDB.getAll(username);
         return homeitems;
     }
     
-    public void insert(Integer itemID, String itemName, double price, String owner) throws Exception {
-        Item hi = new Item(itemID, itemName, price);
+    public void insert(String itemName, double price, String owner) throws Exception {
+        HomeItems hi = new HomeItems(0, itemName, price);
         UserDB userDB = new UserDB();
-        User user = userDB.get(owner);
+        Users user = userDB.getUser(owner);
         hi.setOwner(user);
         
         ItemsDB hiDB = new ItemsDB();
@@ -40,7 +40,7 @@ public class Inventory {
     
     public void update(Integer itemID, String itemName, double price, String owner) throws Exception {
         ItemsDB hiDB = new ItemsDB();
-        Item hi = hiDB.get(itemID);
+        HomeItems hi = hiDB.get(itemID);
         hi.setItemName(itemName);
         hi.setPrice(price);
         
@@ -49,7 +49,7 @@ public class Inventory {
     
     public void delete(int id) throws Exception {
         ItemsDB hiDB = new ItemsDB();
-        Item hi = hiDB.get(id);
+        HomeItems hi = hiDB.get(id);
         hiDB.delete(hi);
     }
 }

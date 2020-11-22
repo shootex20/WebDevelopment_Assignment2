@@ -1,15 +1,15 @@
 package services;
 
 import dataaccess.UserDB;
-import models.User;
+import models.Users;
 
 public class AccountService {
     
-    public User login(String username, String password) {
+    public Users login(String username, String password) {
         UserDB userDB = new UserDB();
         
         try {
-            User user = userDB.get(username);
+            Users user = userDB.getUser(username);
             if (password.equals(user.getPassword())) {
                 return user;
             }
