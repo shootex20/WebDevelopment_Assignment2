@@ -31,28 +31,14 @@ public class LoginServlet extends HttpServlet {
         
         HttpSession session = request.getSession();
 
-        String password = request.getParameter("password");
-        String username = request.getParameter("username");
         String logout = request.getParameter("logout");
-        
-        UserDB userDB = new UserDB();   
-        try {
-          Users user = userDB.getUser(username);
-        } catch (Exception ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         if (logout != null) {
             session.invalidate();
             request.setAttribute("displayMessage", "Logged out.");
             getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
-        } 
-        else if (session.getAttribute("username") != null) {
-            response.sendRedirect(response.encodeRedirectURL("inventory"));
         }
-        else if (username == null || password == null) {
-            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
-        }
+        getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
     }
 
     @Override

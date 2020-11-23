@@ -48,12 +48,13 @@ public class UserDB {
             return results;
     }
 
-    public Users getUser(String username) throws Exception {
+    public Users getUser(String username){
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        try{
+        
+        try {
             Users user = em.find(Users.class, username);
             return user;
-        }finally{
+        } finally {
             em.close();
         }
     }

@@ -28,44 +28,17 @@ public class AdminServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession();
-
-        String username = (String) session.getAttribute("username");
-       
-        UserDB usertest = new UserDB();
         
-        Users admin = null;
-        try
-        {
-        admin = usertest.getUser(username);
-                } catch (Exception ex) {
-            Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-         UserDB userDB = new UserDB();
+                 UserDB userDB1 = new UserDB();
             
             try {
-            List<Users> users = (List<Users>) userDB.getAll();
+            List<Users> users = (List<Users>) userDB1.getAll();
             request.setAttribute("users", users);
         } catch (Exception ex) {
             Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        if (username == null) {
-            session.setAttribute("displayMessage", "Please Login");
-            response.sendRedirect(response.encodeRedirectURL("login"));
-        }
-        
-        
 
-        if (username.equals(admin.getUsername()) && admin.getIsAdmin() == true){
-            
-           getServletContext().getRequestDispatcher("/WEB-INF/admin.jsp").forward(request, response);
-       } else {
-        response.sendRedirect("inventory");
-       }
+                getServletContext().getRequestDispatcher("/WEB-INF/admin.jsp").forward(request, response);
     }
 
     @Override
@@ -76,15 +49,7 @@ public class AdminServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
-        
-         UserDB userDB1 = new UserDB();
-            
-            try {
-            List<Users> users = (List<Users>) userDB1.getAll();
-            request.setAttribute("users", users);
-        } catch (Exception ex) {
-            Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       
 
 
         if(action.equals("delete"))
@@ -92,7 +57,8 @@ public class AdminServlet extends HttpServlet {
             try {
                 String usern = request.getParameter("usersdel");
                 UserDB userDB = new UserDB();
-                Users user = userDB.getUser(usern);
+                Users user = new Users();
+                user = (Users) userDB.getUser(usern);
                 if(usern.equals(username))
                 {
                 userDB.delete(user);

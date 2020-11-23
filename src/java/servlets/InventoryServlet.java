@@ -8,6 +8,7 @@ package servlets;
 import dataaccess.CategoriesDB;
 import dataaccess.UserDB;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,15 +48,9 @@ public class InventoryServlet extends HttpServlet {
         } catch (Exception ex) {
             Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
 
-        // HomeItems hi = new HomeItems();
-        if (username == null) {
-            session.setAttribute("displayMessage", "Please Login");
-            response.sendRedirect(response.encodeRedirectURL("login"));
-        }
             UserDB userDB = new UserDB();
-            Users user = null;
+            Users user = new Users();
         try {
             user = userDB.getUser(username);
         } catch (Exception ex) {
@@ -66,7 +61,7 @@ public class InventoryServlet extends HttpServlet {
             
             CategoriesDB catdb = new CategoriesDB();
 
-            List<Categories> categories = null;
+            List<Categories> categories = new ArrayList<Categories>();
         try {
             categories = (List<Categories>) catdb.getAll();
         } catch (Exception ex) {
@@ -76,7 +71,7 @@ public class InventoryServlet extends HttpServlet {
         request.setAttribute("categories", categories);
 
             double totalPrice = 0;
-            List<HomeItems> items = null;
+            List<HomeItems> items = new ArrayList<HomeItems>();
             try
             {
                 items = (List<HomeItems>) inv.getAll(username);
