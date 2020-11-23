@@ -5,12 +5,10 @@
  */
 package servlets;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import dataaccess.UserDB;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.InputMismatchException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -36,7 +34,13 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String username = request.getParameter("username");
         String logout = request.getParameter("logout");
-
+        
+        UserDB userDB = new UserDB();   
+        try {
+          Users user = userDB.getUser(username);
+        } catch (Exception ex) {
+            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         if (logout != null) {
             session.invalidate();
@@ -45,7 +49,8 @@ public class LoginServlet extends HttpServlet {
         } 
         else if (session.getAttribute("username") != null) {
             response.sendRedirect(response.encodeRedirectURL("inventory"));
-        } else if (username == null || password == null) {
+        }
+        else if (username == null || password == null) {
             getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
         }
     }
@@ -61,6 +66,7 @@ public class LoginServlet extends HttpServlet {
         Users user = as.login(username, password);
         
         if (user == null) {
+            request.setAttribute("displayMessage", "Please enter a username and password.");
             getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
             return;
         }
@@ -68,10 +74,15 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
         session.setAttribute("username", username);
 
-        if (user.getIsAdmin() == true) {
+        if (user.getIsAdmin() == true && user.getActive() == true) {
             response.sendRedirect("admin");
-        } else {
+        } else if(user.getActive() == true){
             response.sendRedirect("inventory");
+        }
+        else
+        {
+        request.setAttribute("displayMessage", "Account is either not active or invalid information has been given.");
+        getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
         }
 
 

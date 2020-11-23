@@ -6,13 +6,8 @@
 package servlets;
 
 import dataaccess.CategoriesDB;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import dataaccess.UserDB;
 import java.io.IOException;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,9 +17,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import static jdk.nashorn.internal.objects.NativeMath.round;
 import models.Categories;
 import models.HomeItems;
+import models.Users;
 import services.Inventory;
 
 /**
@@ -39,10 +34,19 @@ public class InventoryServlet extends HttpServlet {
             throws ServletException, IOException {
         
         Inventory inv = new Inventory();
+        
+        
 
         HttpSession session = request.getSession();
 
         String username = (String) session.getAttribute("username");
+
+        try {
+            List<HomeItems> homeitems = (List<HomeItems>) inv.getAll(username);
+            request.setAttribute("homeitems", homeitems);
+        } catch (Exception ex) {
+            Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
 
         // HomeItems hi = new HomeItems();
@@ -50,8 +54,15 @@ public class InventoryServlet extends HttpServlet {
             session.setAttribute("displayMessage", "Please Login");
             response.sendRedirect(response.encodeRedirectURL("login"));
         }
-
-            session.setAttribute("username", username);
+            UserDB userDB = new UserDB();
+            Users user = null;
+        try {
+            user = userDB.getUser(username);
+        } catch (Exception ex) {
+            Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String firstlast = user.getFirstName() + " " + user.getLastName();
+            session.setAttribute("username", firstlast);
             
             CategoriesDB catdb = new CategoriesDB();
 
@@ -79,8 +90,6 @@ public class InventoryServlet extends HttpServlet {
                 double temp = items.get(i).getPrice();
                 totalPrice = totalPrice + temp;
             }
-            
-            round(totalPrice, 2);
 
             String info = "Total value in inventory: $" + totalPrice;
 
@@ -104,7 +113,8 @@ public class InventoryServlet extends HttpServlet {
 
         String category = request.getParameter("category");
         String itemName = request.getParameter("itemnames");
-        
+        String inputPrice = request.getParameter("itemprice");
+        String action = request.getParameter("action");
         
         
         //Checks category List
@@ -113,6 +123,7 @@ public class InventoryServlet extends HttpServlet {
         List<Categories> cat = null;
         
         int catNum = 0;
+        Categories catObj = null;
         
         try {
             cat = (List<Categories>) catdb.getAll();
@@ -124,51 +135,48 @@ public class InventoryServlet extends HttpServlet {
         {
             if(cat.get(i).getCategoryName().equals(category))
             {
+                catObj = cat.get(i);
                 catNum = cat.get(i).getCategoryID();
             }
         }
 
-        double price = 0;
+        if(action.equals("add"))
+        {
+        double price = Double.parseDouble(inputPrice);
 
-        Inventory inv = new Inventory();
-        //Creates home item object.
-        HomeItems hi;
-        
-        try {
-            inv.insert(itemName, price, username);
-        } catch (Exception ex) {
-            Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            if(price > 0)
+            {
+
+            Inventory inv = new Inventory();
+            HomeItems hi;
+            try {
+                inv.insert(catObj,itemName, price, username);
+                request.setAttribute("message", "Item has been sucessfully added.");
+                doGet(request, response);
+            } catch (Exception ex) {
+                Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            } else {
+
+                request.setAttribute("message", "Invalid. Please re-enter.");
+                doGet(request, response);
+            }
         }
+        else if(action.equals("delete"))
+        {
+            Inventory inv = new Inventory();
+            String id = request.getParameter("itemID");
+            System.out.print(id);
+            int intid = Integer.parseInt(id);
+            try {
+                inv.delete(intid);
+                request.setAttribute("message", "Item successfully deleted.");
+                doGet(request, response);
+            } catch (Exception ex) {
+                Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-            request.getRequestDispatcher("/WEB-INF/inventory.jsp").forward(request, response);
+        }
     }
 
 }
-
-
- 
-/*
-        
-        for(int i = 0; i < items.size(); i++)
-        {
-
-        try {
-                double temp = items.get(i).getPrice();
-                price = totalPrice + temp;
-        } catch (InputMismatchException | NumberFormatException e) {
-            request.setAttribute("message", "Invalid. Please re-enter.");
-        }
-        
-        //Prints values
-        if (price > 0) {
-
-            hi = 
-            request.setAttribute("message", "Item has been sucessfully added.");
-
-            doGet(request, response);
-        } else {
-            
-            request.setAttribute("message", "Invalid. Please re-enter.");
-            doGet(request, response);
-        }
-*/

@@ -8,6 +8,7 @@ package services;
 import dataaccess.ItemsDB;
 import dataaccess.UserDB;
 import java.util.List;
+import models.Categories;
 import models.HomeItems;
 import models.Users;
 
@@ -28,8 +29,8 @@ public class Inventory {
         return homeitems;
     }
     
-    public void insert(String itemName, double price, String owner) throws Exception {
-        HomeItems hi = new HomeItems(0, itemName, price);
+    public void insert(Categories catID, String itemName, double price, String owner) throws Exception {
+        HomeItems hi = new HomeItems(0, catID, itemName, price);
         UserDB userDB = new UserDB();
         Users user = userDB.getUser(owner);
         hi.setOwner(user);

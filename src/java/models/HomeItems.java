@@ -6,6 +6,9 @@
 package models;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale.Category;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,10 +66,11 @@ public class HomeItems implements Serializable {
         this.price = price;
     }
 
-    public HomeItems(Integer itemID, String itemName, double price) {
+    public HomeItems(Integer itemID, Categories cat, String itemName, double price) {
         this.itemID = itemID;
         this.itemName = itemName;
         this.price = price;
+        this.category = cat;
     }
 
     public Integer getItemID() {
