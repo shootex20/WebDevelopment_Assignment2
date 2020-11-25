@@ -28,7 +28,9 @@ public class AdminServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+               request.setAttribute("showEdit", "hidden");
+               request.setAttribute("showAdd", "");
+
                  UserDB userDB1 = new UserDB();
             
             try {
@@ -49,17 +51,16 @@ public class AdminServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
-       
-
 
         if(action.equals("delete"))
         {
             try {
-                String usern = request.getParameter("usersdel");
+                String usern = request.getParameter("userdel");
                 UserDB userDB = new UserDB();
                 Users user = new Users();
                 user = (Users) userDB.getUser(usern);
-                if(usern.equals(username))
+                Users adminUser = userDB.getUser(username);
+                if(!user.equals(adminUser))
                 {
                 userDB.delete(user);
                 request.setAttribute("displayMessage", "Successfully deleted user.");
@@ -67,15 +68,17 @@ public class AdminServlet extends HttpServlet {
                 }
                 else
                 {
-                 request.setAttribute("displayMessage", "You cannot yourself!");
+                request.setAttribute("displayMessage", "You cannot delete yourself!");
                doGet(request, response);
                 }
                 
             } catch (Exception ex) {
                 Logger.getLogger(AdminServlet.class.getName()).log(Level.SEVERE, null, ex);
+                request.setAttribute("displayMessage", "Uh-oh! Something went wrong.");
+               doGet(request, response);
             }
         }
-        else if(action.equals("save"))
+       else if(action.equals("save"))
         {
         UserDB userDB = new UserDB();
         String addusername = request.getParameter("addusername");
@@ -91,8 +94,66 @@ public class AdminServlet extends HttpServlet {
                doGet(request, response);
             } catch (Exception ex) {
                 Logger.getLogger(AdminServlet.class.getName()).log(Level.SEVERE, null, ex);
+                request.setAttribute("displayMessage", "Uh-oh! Something went wrong.");
+               doGet(request, response);
             }
         }
+        /* DOES NOT WORK RIGHT NO
+        
+        if(action.equals("edit"))
+        {
+            
+        request.setAttribute("showEdit", "");
+        request.setAttribute("showAdd", "hidden");
+        
+        String usern = request.getParameter("useredit");
+        UserDB userDB = new UserDB();
+        Users user = (Users) userDB.getUser(usern);
+        
+        request.setAttribute("editusername", user.getUsername());
+        request.setAttribute("editpassword", user.getUsername());        
+        request.setAttribute("editemail", user.getUsername());        
+        request.setAttribute("editfirstname", user.getUsername());        
+        request.setAttribute("editlastname", user.getUsername());
+        
+        if(user.getActive() == true)
+        {
+        request.setAttribute("activeUsers", "true"); 
+        }
+        else
+        {
+        request.setAttribute("activeUsers", "false"); 
+        }
+        if(user.getIsAdmin() == true)
+        {
+        request.setAttribute("activeAdmins", "true"); 
+        }
+        else
+        {
+        request.setAttribute("activeAdmins", "false"); 
+        }
+      
+        
+        
+        
+        
+        
+        
+        
+        String editUser = request.getParameter("editusername");
+        String editPassword = request.getParameter("editpassword");
+        String editemail = request.getParameter("editemail");
+        String editfirstname = request.getParameter("editfirstname");
+        String editlastname = request.getParameter("editlastname");        
+        String editisactive = request.getParameter("activeUsers");
+        String editisadmin = request.getParameter("activeAdmins");
+
+        
+        }
+        */
+        
+       
+    
         getServletContext().getRequestDispatcher("/WEB-INF/admin.jsp").forward(request, response);
     }
 

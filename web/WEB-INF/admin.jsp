@@ -44,11 +44,17 @@
             <input type="submit" value="Delete">
             <input type="hidden" name="userdel" value="${user.username}"></td>
             </td>
+            <td style="border:1px solid black">
+            <input type="hidden" name="action" value="edit">
+            <input type="submit" value="Edit">
+            <input type="hidden" name="useredit" value="${user.username}"></td>
+            </td>
          </tr>
          </form>
          </c:forEach>
        </table>
 
+        <div ${showAdd}>
        <form method="post">
             <h2>Add User</h2>
             <label for="title">Username: </label>
@@ -69,6 +75,41 @@
             <input type="submit" value="Save">
             <input type="hidden" name="action" value="save">
             </form>
+    </div>
+       <div ${showEdit}>
+       <form method="post" >
+            <h2>Edit User</h2>
+            <label for="title">Username: </label>
+            <input type="text" name="editusername">
+            <br>
+            <label for="title">Password: </label>
+            <input type="text" name="editpassword">
+            <br>
+            <label for="title">Email:  </label>
+            <input type="text" name="editemail">
+            <br>
+            <label for="title">First Name: </label>
+            <input type="text" name="editfirstname">
+            <br>
+            <label for="title">Last Name: </label>
+            <input type="text" name="editlastname">
+            <br>
+            <label for="active">Active User: </label>
+            <select name="activeUsers" id="activeUser">
+            <option value="true">True</option>
+            <option value="false">False</option>
+            </select>
+            <br>
+            <label for="title">Admin User: </label>
+            <select name="activeAdmins" id="adminUser">
+            <option value="true">True</option>
+            <option value="false">False</option>
+            </select>
+            <br>
+            <input type="submit" value="Save">
+            <input type="hidden" name="action" value="saveInfo">
+            </form>
+        </div>
             <br>
            ${displayMessage}
         <br>

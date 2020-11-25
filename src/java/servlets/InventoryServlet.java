@@ -87,8 +87,8 @@ public class InventoryServlet extends HttpServlet {
                 totalPrice = totalPrice + temp;
             }
 
-            totalPrice = Math.round(totalPrice * 100);
-            totalPrice = totalPrice/100;
+                totalPrice = Math.round(totalPrice * 100);
+                totalPrice = totalPrice/100;
 
             String info = "Total value in inventory: $" + totalPrice;
 
