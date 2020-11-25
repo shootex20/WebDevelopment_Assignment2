@@ -23,8 +23,8 @@
         <br>
         <a href="login?logout" name="logout">Logout</a>
         <br>
-        <h2>Inventory for ${username}.</h2>
-        <form method="post">
+        <h2>Inventory for ${nameofinventory}.</h2>
+            
         <table style="width:30%;border:1px solid black">
          <tr style="border:1px solid black">
            <th style="border:1px solid black">Category</th>
@@ -32,32 +32,25 @@
            <th style="border:1px solid black">Price</th>
            <th style="border:1px solid black"></th>
         <c:forEach items="${homeitems}" var="homeitem">
+         <form method="post">
          <tr style="border:1px solid black">
            <td style="border:1px solid black">${homeitem.category.categoryName}</td>
            <td style="border:1px solid black">${homeitem.itemName}</td>
            <td style="border:1px solid black">$${homeitem.price}</td>
-           <td style="border:1px solid black">
-               <input type="submit" value="Delete">
-            <input type="hidden" name="action" value="delete">
-           <input type="hidden" name="itemID" value="${homeitem.itemID}"></td>
+           <td style="border:1px solid black"> <input type="submit" name="action" value="Delete"> <input type="hidden" name="itemID" value="${homeitem.itemID}"></td>
          </tr>
+         </form>
          </c:forEach>
        </table>
         <br>
         <h3>Add Item</h3>
+        <form method="post">
         <br>
         <label for="category">Category: </label>
         <select name="category" id="category">
-        <option value="kitchen">kitchen</option>
-        <option value="bathroom">bathroom</option>
-        <option value="living room">living room</option>
-        <option value="basement">basement</option>
-        <option value="bedroom">bedroom</option>
-        <option value="garage">garage</option>
-        <option value="office">office</option>
-        <option value="utility room">utility room</option>
-        <option value="storage">storage</option>
-        <option value="other">other</option>
+        <c:forEach items="${categories}" var="category">
+        <option value="${category.categoryID}">${category.categoryName}</option>
+        </c:forEach>
         </select>
         <br>
         <label for="title">Item Name: </label>
@@ -66,8 +59,7 @@
         <label for="title">Price: </label>
         <input type="text" name="itemprice">
         <br>
-        <input type="hidden" name="action" value="add">
-        <input type="submit" name="add" value="Add">
+        <input type="submit" name="action" value="Add">
         <br>
         <br>
         </form>

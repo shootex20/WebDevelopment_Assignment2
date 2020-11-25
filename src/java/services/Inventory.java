@@ -30,7 +30,7 @@ public class Inventory {
     }
     
     public void insert(Categories catID, String itemName, double price, String owner) throws Exception {
-        HomeItems hi = new HomeItems(0, catID, itemName, price);
+        HomeItems hi = new HomeItems(catID, itemName, price);
         UserDB userDB = new UserDB();
         Users user = userDB.getUser(owner);
         hi.setOwner(user);
@@ -50,7 +50,7 @@ public class Inventory {
     
     public void delete(int id) throws Exception {
         ItemsDB hiDB = new ItemsDB();
-        HomeItems hi = hiDB.get(id);
+        HomeItems hi = (HomeItems) hiDB.get(id);
         hiDB.delete(hi);
     }
 }

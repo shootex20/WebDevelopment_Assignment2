@@ -25,7 +25,7 @@
         <br>
         <h2>Manage Users</h2>
         <br>            
-        <form method="post">
+
         <table style="width:30%;border:1px solid black">
          <tr style="border:1px solid black">
            <th style="border:1px solid black">Username</th>
@@ -34,6 +34,7 @@
            <th style="border:1px solid black">Delete</th>
            <th style="border:1px solid black">Edit</th>
         <c:forEach items="${users}" var="user">
+         <form method="post">
          <tr style="border:1px solid black">
            <td style="border:1px solid black">${user.username}</td>
            <td style="border:1px solid black">${user.firstName}</td>
@@ -44,9 +45,10 @@
             <input type="hidden" name="userdel" value="${user.username}"></td>
             </td>
          </tr>
+         </form>
          </c:forEach>
        </table>
-                    </form>
+
        <form method="post">
             <h2>Add User</h2>
             <label for="title">Username: </label>

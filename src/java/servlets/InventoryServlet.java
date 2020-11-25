@@ -8,6 +8,7 @@ package servlets;
 import dataaccess.CategoriesDB;
 import dataaccess.UserDB;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -57,7 +58,7 @@ public class InventoryServlet extends HttpServlet {
             Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         String firstlast = user.getFirstName() + " " + user.getLastName();
-            session.setAttribute("username", firstlast);
+            session.setAttribute("nameofinventory", firstlast);
             
             CategoriesDB catdb = new CategoriesDB();
 
@@ -86,6 +87,9 @@ public class InventoryServlet extends HttpServlet {
                 totalPrice = totalPrice + temp;
             }
 
+            totalPrice = Math.round(totalPrice * 100);
+            totalPrice = totalPrice/100;
+
             String info = "Total value in inventory: $" + totalPrice;
 
             //Gives total inventory.
@@ -105,14 +109,19 @@ public class InventoryServlet extends HttpServlet {
         //Get the user name of the session.
         String username = (String) session.getAttribute("username");
 
+        Inventory inv = new Inventory();
 
+        String action = request.getParameter("action");
         String category = request.getParameter("category");
         String itemName = request.getParameter("itemnames");
         String inputPrice = request.getParameter("itemprice");
-        String action = request.getParameter("action");
         
         
-        //Checks category List
+
+        if(action.equals("Add"))
+        {
+            
+                    //Checks category List
         CategoriesDB catdb = new CategoriesDB();
         
         List<Categories> cat = null;
@@ -126,23 +135,21 @@ public class InventoryServlet extends HttpServlet {
             Logger.getLogger(InventoryServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        
+        int parseCatId = Integer.parseInt(category);
         for(int i = 0; i < cat.size(); i++)
         {
-            if(cat.get(i).getCategoryName().equals(category))
+            if(cat.get(i).getCategoryID().equals(parseCatId))
             {
                 catObj = cat.get(i);
-                catNum = cat.get(i).getCategoryID();
             }
         }
-
-        if(action.equals("add"))
-        {
+            
         double price = Double.parseDouble(inputPrice);
 
             if(price > 0)
             {
 
-            Inventory inv = new Inventory();
             HomeItems hi;
             try {
                 inv.insert(catObj,itemName, price, username);
@@ -157,10 +164,9 @@ public class InventoryServlet extends HttpServlet {
                 doGet(request, response);
             }
         }
-        else if(action.equals("delete"))
+        if(action.equals("Delete"))
         {
-            Inventory inv = new Inventory();
-            String id = request.getParameter("itemID");
+                    String id = request.getParameter("itemID");
             System.out.print(id);
             int intid = Integer.parseInt(id);
             try {
